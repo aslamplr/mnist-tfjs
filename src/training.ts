@@ -1,6 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 import * as tfvis from "@tensorflow/tfjs-vis";
 import { MnistData } from "./data";
+import { async } from "q";
 
 async function showExamples(data: MnistData) {
   // Create a container in the visor
@@ -164,18 +165,25 @@ async function showConfusion(model: tf.LayersModel, data: MnistData) {
   labels.dispose();
 }
 
-async function run() {
-  const data = new MnistData();
+let model: tf.LayersModel;
+let data: MnistData;
+
+export async function loadData() {
+  data = new MnistData();
   await data.load();
   await showExamples(data);
+}
 
-  const model = getModel();
+export async function createModel() {
+  model = getModel();
   tfvis.show.modelSummary({ name: "Model Architecture" }, model);
+}
 
-  await train(model, data, 10);
+export async function startTraining(epochs: number) {
+  await train(model, data, epochs);
+}
 
+export async function showMatrics() {
   await showAccuracy(model, data);
   await showConfusion(model, data);
 }
-
-document.addEventListener("DOMContentLoaded", run);
