@@ -1,7 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 import * as tfvis from "@tensorflow/tfjs-vis";
 import { MnistData } from "./data";
-import { async } from "q";
 
 async function showExamples(data: MnistData) {
   // Create a container in the visor
@@ -25,7 +24,7 @@ async function showExamples(data: MnistData) {
     const canvas = document.createElement("canvas");
     canvas.width = 28;
     canvas.height = 28;
-    (canvas as any).style = "margin: 4px;";
+    canvas.style.margin = "4px";
     await tf.browser.toPixels(imageTensor, canvas);
     surface.drawArea.appendChild(canvas);
 
@@ -130,26 +129,46 @@ async function train(model: tf.LayersModel, data: MnistData, epochs: number) {
   });
 }
 
-const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+const classNames = [
+  "Zero",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine"
+];
 
-function doPrediction(model: tf.LayersModel, data: MnistData, testDataSize = 500
-  ): [tf.Tensor1D, tf.Tensor1D] {
+function doPrediction(
+  model: tf.LayersModel,
+  data: MnistData,
+  testDataSize = 500
+): [tf.Tensor1D, tf.Tensor1D] {
   const IMAGE_WIDTH = 28;
   const IMAGE_HEIGHT = 28;
   const testData = data.nextTestBatch(testDataSize);
-  const testxs = testData.xs.reshape<tf.Rank.R4>([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
+  const testxs = testData.xs.reshape<tf.Rank.R4>([
+    testDataSize,
+    IMAGE_WIDTH,
+    IMAGE_HEIGHT,
+    1
+  ]);
   const labels = testData.labels.argMax(-1) as tf.Tensor1D;
-  const preds = (model.predict(testxs) as tf.Tensor2D).argMax(-1) as tf.Tensor1D;
+  const preds = (model.predict(testxs) as tf.Tensor2D).argMax(
+    -1
+  ) as tf.Tensor1D;
 
   testxs.dispose();
   return [preds, labels];
 }
 
-
 async function showAccuracy(model: tf.LayersModel, data: MnistData) {
   const [preds, labels] = doPrediction(model, data);
   const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
-  const container = {name: 'Accuracy', tab: 'Evaluation'};
+  const container = { name: "Accuracy", tab: "Evaluation" };
   tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
 
   labels.dispose();
@@ -158,32 +177,39 @@ async function showAccuracy(model: tf.LayersModel, data: MnistData) {
 async function showConfusion(model: tf.LayersModel, data: MnistData) {
   const [preds, labels] = doPrediction(model, data);
   const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
-  const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
-  tfvis.render.confusionMatrix(
-      container, {values: confusionMatrix}, classNames as any);
+  const container = { name: "Confusion Matrix", tab: "Evaluation" };
+  tfvis.render.confusionMatrix(container, {
+    values: confusionMatrix,
+    tickLabels: classNames
+  });
 
   labels.dispose();
 }
 
-let model: tf.LayersModel;
-let data: MnistData;
+export default class MnistTraining {
+  private model: tf.LayersModel;
+  private data: MnistData;
 
-export async function loadData() {
-  data = new MnistData();
-  await data.load();
-  await showExamples(data);
-}
-
-export async function createModel() {
-  model = getModel();
-  tfvis.show.modelSummary({ name: "Model Architecture" }, model);
-}
-
-export async function startTraining(epochs: number) {
-  await train(model, data, epochs);
-}
-
-export async function showMatrics() {
-  await showAccuracy(model, data);
-  await showConfusion(model, data);
+  constructor() {
+    this.data = new MnistData();
+    this.model = getModel();
+  }
+  
+  public async loadData() {
+    await this.data.load();
+    await showExamples(this.data);
+  }
+  
+  public async visualizeModel() {
+    tfvis.show.modelSummary({ name: "Model Architecture" }, this.model);
+  }
+  
+  public async startTraining(epochs: number) {
+    await train(this.model, this.data, epochs);
+  }
+  
+  public async showMatrics() {
+    await showAccuracy(this.model, this.data);
+    await showConfusion(this.model, this.data);
+  }
 }

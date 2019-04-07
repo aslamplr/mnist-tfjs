@@ -1,5 +1,7 @@
-import * as React from "react";
-import { loadData, createModel, startTraining, showMatrics } from "./training";
+import React from "react";
+import MnistTraining from "./training";
+
+const mnistTraining = new MnistTraining();
 
 interface IState {
   isDataLoaded: boolean;
@@ -13,7 +15,7 @@ interface IAction {
 }
 
 const LOAD_DATA_CLICKED = "LOAD_DATA_CLICKED";
-const CREATE_MODEL_CLICKED = "CREATE_MODEL_CLICKED";
+const VISUALIZE_MODEL_CLICKED = "VISUALIZE_MODEL_CLICKED";
 const START_TRAINING_CLICKED = "START_TRAINING_CLICKED";
 const SHOW_MATRICS_CLICKED = "SHOW_MATRICS_CLICKED";
 const CHANGE_EPOCHS = "CHANGE_EPOCHS";
@@ -32,7 +34,7 @@ export default () => {
           ..._state,
           isDataLoaded: true
         };
-      } else if (action.type === CREATE_MODEL_CLICKED) {
+      } else if (action.type === VISUALIZE_MODEL_CLICKED) {
         return {
           ..._state,
           isModelCreated: true
@@ -50,22 +52,22 @@ export default () => {
 
   const _loadData = () => {
     dispatch({ type: LOAD_DATA_CLICKED });
-    loadData();
+    mnistTraining.loadData();
   };
 
   const _createModel = () => {
-    dispatch({ type: CREATE_MODEL_CLICKED });
-    createModel();
+    dispatch({ type: VISUALIZE_MODEL_CLICKED });
+    mnistTraining.visualizeModel();
   };
 
   const _startTraining = () => {
     dispatch({ type: START_TRAINING_CLICKED });
-    startTraining(state.epochs);
+    mnistTraining.startTraining(state.epochs);
   };
 
   const _showMatrics = () => {
     dispatch({ type: SHOW_MATRICS_CLICKED });
-    showMatrics();
+    mnistTraining.showMatrics();
   };
 
   const _changeEpochs = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,19 +81,19 @@ export default () => {
   return (
     <div className="center">
       <div>Type "`" to show/hide the tfjs vis</div>
-      <hr/>
+      <hr />
       <div>
         <button onClick={_loadData} disabled={state.isDataLoaded}>
           Load data
         </button>
       </div>
-      <hr/>
+      <hr />
       <div>
         <button onClick={_createModel} disabled={state.isModelCreated}>
-          Create Model
+          Visualize Model
         </button>
       </div>
-      <hr/>
+      <hr />
       <div>
         <div>
           <label htmlFor="epochs">Epochs:</label>
@@ -104,7 +106,7 @@ export default () => {
         </div>
         <button onClick={_startTraining}>Start Training</button>
       </div>
-      <hr/>
+      <hr />
       <div>
         <button onClick={_showMatrics}>Show Matrices</button>
       </div>
