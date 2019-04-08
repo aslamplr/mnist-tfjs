@@ -8,6 +8,7 @@ import {
   visualizeModel,
   getFitCallbacks
 } from "./vis";
+import { IMAGE_WIDTH, IMAGE_HEIGHT, MODEL_SAVE_PATH } from "../constants";
 
 function getModel() {
   const model = tf.sequential();
@@ -117,8 +118,6 @@ function doPrediction(
   data: MnistData,
   testDataSize = 500
 ): [tf.Tensor1D, tf.Tensor1D] {
-  const IMAGE_WIDTH = 28;
-  const IMAGE_HEIGHT = 28;
   const testData = data.nextTestBatch(testDataSize);
   const testxs = testData.xs.reshape<tf.Rank.R4>([
     testDataSize,
@@ -126,16 +125,13 @@ function doPrediction(
     IMAGE_HEIGHT,
     1
   ]);
-  const labels = testData.labels.argMax(-1) as tf.Tensor1D;
-  const preds = (model.predict(testxs) as tf.Tensor2D).argMax(
-    -1
-  ) as tf.Tensor1D;
-
+  const labels = testData.labels.argMax(1) as tf.Tensor1D;
+  const preds = (model.predict(testxs) as tf.Tensor2D).argMax(1) as tf.Tensor1D;
   testxs.dispose();
   return [preds, labels];
 }
 
-export default class MnistTraining {
+class MnistTraining {
   private model: tf.LayersModel;
   private data: MnistData;
 
@@ -155,6 +151,7 @@ export default class MnistTraining {
 
   public async startTraining(epochs: number) {
     await train(this.model, this.data, epochs);
+    this.model.save(MODEL_SAVE_PATH);
   }
 
   public async showMatrics() {
@@ -163,4 +160,21 @@ export default class MnistTraining {
     await showConfusion(predictions, this.data, classNames);
     predictions.map(tensor => tensor.dispose());
   }
+
+  public async predict(sample: tf.Tensor1D) {
+    let model = this.model;
+    try {
+      model = await tf.loadLayersModel(MODEL_SAVE_PATH)      
+    } catch (error) { }
+    const resp = await tf.tidy(() =>
+      (model.predict(
+        sample.reshape<tf.Rank.R4>([1, IMAGE_WIDTH, IMAGE_HEIGHT, 1])
+      ) as tf.Tensor2D)
+        .argMax(1)
+        .asScalar()
+    ).data();
+    return resp.toString();
+  }
 }
+
+export default new MnistTraining();

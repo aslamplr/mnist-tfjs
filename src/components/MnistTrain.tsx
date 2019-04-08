@@ -1,7 +1,5 @@
 import React from "react";
-import MnistTraining from "../mnist/training";
-
-const mnistTraining = new MnistTraining();
+import mnistTraining from "../mnist/training";
 
 interface IState {
   isDataLoaded: boolean;
@@ -79,7 +77,7 @@ export default () => {
   };
 
   return (
-    <div className="center">
+    <div>
       <div>Type "`" to show/hide the tfjs vis</div>
       <hr />
       <div>

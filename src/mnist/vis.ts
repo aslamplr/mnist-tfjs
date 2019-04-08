@@ -42,7 +42,9 @@ export function getFitCallbacks() {
     name: "Model Training",
     styles: { height: "1000px" }
   };
-  return tfvis.show.fitCallbacks(container, metrics);
+  return tfvis.show.fitCallbacks(container, metrics, {
+    zoomToFit: true, zoomToFitAccuracy: true
+  });
 }
 
 export async function showAccuracy(
