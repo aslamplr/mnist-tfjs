@@ -10,7 +10,7 @@ I have made few modifications to the original tutorial. Should be straightforwar
 - `data.js` has been renamed to `data.ts` and annotated with types using typescript
 - `script.js` has been renamed to `training.ts` and annotated with types using typescript
 
-## Install the local yarn packages
+## Install the local npm packages
 ```
 $ yarn 
 ```
