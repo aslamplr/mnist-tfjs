@@ -194,20 +194,20 @@ export default class MnistTraining {
     this.data = new MnistData();
     this.model = getModel();
   }
-  
+
   public async loadData() {
     await this.data.load();
     await showExamples(this.data);
   }
-  
+
   public async visualizeModel() {
     tfvis.show.modelSummary({ name: "Model Architecture" }, this.model);
   }
-  
+
   public async startTraining(epochs: number) {
     await train(this.model, this.data, epochs);
   }
-  
+
   public async showMatrics() {
     await showAccuracy(this.model, this.data);
     await showConfusion(this.model, this.data);
