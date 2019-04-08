@@ -34,3 +34,12 @@ input {
   padding: 15px;
   transform: translate(-10%, -50%);
 }
+
+.visor-control {
+  border: 1px #c1c1c1 solid;
+  border-radius: 4px;
+}
+
+.visor-control > span {
+  padding-right: 15px;
+}
