@@ -53,7 +53,6 @@ export async function showAccuracy(
   const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
   const container = { name: "Accuracy", tab: "Evaluation" };
   tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
-  labels.dispose();
 }
 
 export async function showConfusion(
@@ -67,8 +66,6 @@ export async function showConfusion(
     values: confusionMatrix,
     tickLabels: classNames
   });
-
-  labels.dispose();
 }
 
 export function openVis() {
