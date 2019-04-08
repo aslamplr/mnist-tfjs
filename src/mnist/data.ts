@@ -16,6 +16,7 @@
  */
 
 import * as tf from "@tensorflow/tfjs";
+import { DataLoader, DataProvider } from "./types";
 
 const IMAGE_SIZE = 784;
 const NUM_CLASSES = 10;
@@ -37,7 +38,7 @@ const MNIST_LABELS_PATH =
  * NOTE: This will get much easier. For now, we do data fetching and
  * manipulation manually.
  */
-export class MnistData {
+export class MnistData implements DataProvider, DataLoader {
   private shuffledTestIndex: number;
   private shuffledTrainIndex: number;
   private datasetImages: Float32Array;
@@ -62,7 +63,7 @@ export class MnistData {
     this.testLabels = new Uint8Array();
   }
 
-  async load() {
+  public async load() {
     // Make a request for the MNIST sprited image.
     const img = new Image();
     const canvas = document.createElement("canvas");
@@ -142,7 +143,7 @@ export class MnistData {
     );
   }
 
-  nextTrainBatch(batchSize: number) {
+  public nextTrainBatch(batchSize: number) {
     return this.nextBatch(
       batchSize,
       [this.trainImages, this.trainLabels],
@@ -154,7 +155,7 @@ export class MnistData {
     );
   }
 
-  nextTestBatch(batchSize: number) {
+  public nextTestBatch(batchSize: number) {
     return this.nextBatch(batchSize, [this.testImages, this.testLabels], () => {
       this.shuffledTestIndex =
         (this.shuffledTestIndex + 1) % this.testIndices.length;
@@ -162,7 +163,7 @@ export class MnistData {
     });
   }
 
-  nextBatch(
+  private nextBatch(
     batchSize: number,
     data: [Float32Array, Uint8Array],
     index: () => number
