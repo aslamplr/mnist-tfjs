@@ -70,3 +70,11 @@ export async function showConfusion(
 
   labels.dispose();
 }
+
+export function openVis() {
+  tfvis.visor().open();
+}
+
+export function isVisOpen() {
+  return tfvis.visor().isOpen();
+}
