@@ -161,5 +161,6 @@ export default class MnistTraining {
     const predictions = doPrediction(this.model, this.data);
     await showAccuracy(predictions, this.data, classNames);
     await showConfusion(predictions, this.data, classNames);
+    predictions.map(tensor => tensor.dispose());
   }
 }
