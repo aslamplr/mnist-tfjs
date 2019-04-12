@@ -1,5 +1,8 @@
 import React from "react";
 import mnistTraining from "../mnist/training";
+import { Box, Button, Text, TextInput, Heading, FormField } from "grommet";
+
+const RowBox = (props: any) => <Box pad="medium" direction="row" {...props} />;
 
 interface IState {
   isDataLoaded: boolean;
@@ -77,37 +80,45 @@ export default () => {
   };
 
   return (
-    <div>
-      <div>Type "`" to show/hide the tfjs vis</div>
-      <hr />
-      <div>
-        <button onClick={_loadData} disabled={state.isDataLoaded}>
-          Load data
-        </button>
-      </div>
-      <hr />
-      <div>
-        <button onClick={_createModel} disabled={state.isModelCreated}>
-          Visualize Model
-        </button>
-      </div>
-      <hr />
-      <div>
-        <div>
-          <label htmlFor="epochs">Epochs:</label>
-          <input
-            id="epochs"
+    <Box direction="column" align="center" pad="medium">
+      <RowBox>
+        <Text>Visualization pane will open from the right hand side</Text>
+      </RowBox>
+      <RowBox>
+        <Button
+          label="Load data"
+          onClick={_loadData}
+          disabled={state.isDataLoaded}
+        />
+      </RowBox>
+      <RowBox>
+        <Button
+          label="Model Summary"
+          onClick={_createModel}
+          disabled={state.isModelCreated}
+        />
+      </RowBox>
+      <RowBox>
+        <Text>Model summary would be displayed in the vis pane</Text>
+      </RowBox>
+      <RowBox>
+        <FormField label="Number of epochs to train">
+          <TextInput
+            placeholder="Enter number of epochs"
             type="number"
+            size="small"
             value={state.epochs}
             onChange={_changeEpochs}
           />
-        </div>
-        <button onClick={_startTraining}>Start Training</button>
-      </div>
-      <hr />
-      <div>
-        <button onClick={_showMatrics}>Show Matrices</button>
-      </div>
-    </div>
+        </FormField>
+      </RowBox>
+      <RowBox>
+        <Button label="Start Training" onClick={_startTraining} />
+      </RowBox>
+      <RowBox>
+        <Button label="Show Matrices" onClick={_showMatrics} />
+      </RowBox>
+      <Heading level="5">Type "`" to show/hide the tfjs vis</Heading>
+    </Box>
   );
 };
