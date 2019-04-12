@@ -91,7 +91,7 @@ async function train(model: tf.LayersModel, data: MnistData, epochs: number) {
     return [d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]), d.labels];
   });
 
-  return model.fit(trainXs, trainYs, {
+  return await model.fit(trainXs, trainYs, {
     batchSize: BATCH_SIZE,
     validationData: [testXs, testYs],
     epochs,
@@ -150,8 +150,12 @@ class MnistTraining {
   }
 
   public async startTraining(epochs: number) {
-    await train(this.model, this.data, epochs);
-    this.model.save(MODEL_SAVE_PATH);
+    try {
+      await train(this.model, this.data, epochs);
+      this.model.save(MODEL_SAVE_PATH);      
+    } catch (error) {
+      console.error("An error occured while training", error);
+    }
   }
 
   public async showMatrics() {
