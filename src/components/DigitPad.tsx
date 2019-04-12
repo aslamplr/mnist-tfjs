@@ -6,6 +6,7 @@ import {
   runWIthCanvasContext,
   recognizeDigit
 } from "../helpers/canvas";
+import { Box, Text } from "grommet";
 
 interface Coordinates {
   x: number;
@@ -57,7 +58,7 @@ export default () => {
       touchmove(coors: Coordinates) {
         if (isDrawing) {
           try {
-            clearTimeout(touchend)
+            clearTimeout(touchend);
           } catch (e) {}
           if (isRecognized) {
             clearer(context);
@@ -135,11 +136,13 @@ export default () => {
   };
 
   return (
-    <div>
-      <div>
-        <span>Draw here</span>
-      </div>
-      <div>
+    <Box direction="column" align="center" pad="medium">
+      <Text>Draw here</Text>
+      <Box
+        border={{ color: "brand", size: "large" }}
+        height={`${DIGIT_PAD_HEIGHT + 12}px`}
+        width={`${DIGIT_PAD_WIDTH + 12}px`}
+      >
         <canvas
           ref={canvasRef}
           width={DIGIT_PAD_WIDTH}
@@ -151,10 +154,13 @@ export default () => {
           onMouseMove={draw}
           onMouseUp={draw}
         />
-      </div>
-      <div>
-        <span>{prediction}</span>
-      </div>
-    </div>
+      </Box>
+      <Box>
+        <Text>Prediction</Text>
+        <Text size="160px" weight="bold">
+          {prediction}
+        </Text>
+      </Box>
+    </Box>
   );
 };
