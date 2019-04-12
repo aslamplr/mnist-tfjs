@@ -40,10 +40,11 @@ export function getFitCallbacks() {
   const metrics = ["loss", "val_loss", "acc", "val_acc"];
   const container = {
     name: "Model Training",
-    styles: { height: "1000px" }
+    styles: { height: "800px" }
   };
+   
   return tfvis.show.fitCallbacks(container, metrics, {
-    zoomToFit: true, zoomToFitAccuracy: true
+    callbacks: ['onEpochEnd']
   });
 }
 
