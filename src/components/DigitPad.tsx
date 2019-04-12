@@ -38,9 +38,12 @@ export default () => {
         event.preventDefault();
       };
       // prevent elastic scrolling
-      document.body.addEventListener("touchmove", handler, false);
-      return () =>
-        document.body.removeEventListener("touchmove", handler, false);
+      canvas.addEventListener("touchmove", handler, false);
+      canvas.addEventListener("touchcancel", handler, false);
+      return () => {
+        canvas.removeEventListener("touchmove", handler, false);
+        canvas.removeEventListener("touchcancel", handler, false);
+      }
     });
   }, []);
 
@@ -89,6 +92,7 @@ export default () => {
       | React.TouchEvent<HTMLCanvasElement>
       | React.MouseEvent<HTMLCanvasElement>
   ) => {
+    event.preventDefault();
     let type: "touchstart" | "touchmove" | "touchend" | null = null;
     // map mouse events to touch events
     switch (event.type) {
