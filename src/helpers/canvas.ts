@@ -8,7 +8,7 @@ import { DIGIT_PAD_WIDTH, DIGIT_PAD_HEIGHT } from "../constants";
 import mnistTraining from "../mnist/training";
 
 // Source: https://codepen.io/arguiot/pen/xPYRKZ?editors=1100
-// Number recognizer // TODO: cleanup 
+// Number recognizer // TODO: cleanup
 export async function recognizeDigit(context: CanvasRenderingContext2D) {
   return new Promise<string>(async (resolve, reject) => {
     let imgData = context.getImageData(0, 0, DIGIT_PAD_WIDTH, DIGIT_PAD_HEIGHT);
@@ -81,28 +81,31 @@ export async function recognizeDigit(context: CanvasRenderingContext2D) {
   });
 }
 
-export function getMousePos(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
+export function getMousePos(
+  canvas: HTMLCanvasElement,
+  clientX: number,
+  clientY: number
+) {
   var rect = canvas.getBoundingClientRect();
   return {
-      x: (clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-      y: (clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+    x: ((clientX - rect.left) / (rect.right - rect.left)) * canvas.width,
+    y: ((clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
   };
 }
 
-export const runWIthCanvasContext = (ref: React.RefObject<HTMLCanvasElement>) => <
-    _,
-    ReturnTypeT
-  >(
-    callback: (
-      canvas: HTMLCanvasElement,
-      context: CanvasRenderingContext2D
-    ) => ReturnTypeT
-  ) => {
-    if (ref.current) {
-      const canvas = ref.current;
-      const context = canvas.getContext("2d");
-      if (context) {
-        return callback(canvas, context);
-      }
+export const runWIthCanvasContext = (
+  ref: React.RefObject<HTMLCanvasElement>
+) => <_, ReturnTypeT>(
+  callback: (
+    canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D
+  ) => ReturnTypeT
+) => {
+  if (ref.current) {
+    const canvas = ref.current;
+    const context = canvas.getContext("2d");
+    if (context) {
+      return callback(canvas, context);
     }
-  };
+  }
+};

@@ -42,9 +42,9 @@ export function getFitCallbacks() {
     name: "Model Training",
     styles: { height: "800px" }
   };
-   
+
   return tfvis.show.fitCallbacks(container, metrics, {
-    callbacks: ['onEpochEnd']
+    callbacks: ["onEpochEnd"]
   });
 }
 

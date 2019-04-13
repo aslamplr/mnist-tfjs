@@ -91,11 +91,11 @@ export default () => {
                   flex
                   align="center"
                   justify="center"
-                  height="1200px"
+                  height="1600px"
                   overflow={{ vertical: "scroll" }}
                 >
-                  <MnistTrain />
                   <DigitPad />
+                  <MnistTrain />
                 </Box>
               </Box>
             </Box>

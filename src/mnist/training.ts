@@ -134,15 +134,25 @@ function doPrediction(
 class MnistTraining {
   private model: tf.LayersModel;
   private data: MnistData;
+  private isExternalModelLoaded: boolean;
 
   constructor() {
     this.data = new MnistData();
     this.model = getModel();
+    this.isExternalModelLoaded = false;
   }
 
   public async loadData() {
     await this.data.load();
     await showExamples(this.data);
+  }
+
+  public async loadTrainedModel() {
+    const MODEL_ASSET_PATH = `${location.protocol}//${
+      location.host
+    }/assets/models/mnist/model.json`;
+    this.model = await tf.loadLayersModel(MODEL_ASSET_PATH);
+    this.isExternalModelLoaded = true;
   }
 
   public async visualizeModel() {
@@ -152,7 +162,7 @@ class MnistTraining {
   public async startTraining(epochs: number) {
     try {
       await train(this.model, this.data, epochs);
-      this.model.save(MODEL_SAVE_PATH);      
+      this.model.save(MODEL_SAVE_PATH);
     } catch (error) {
       console.error("An error occured while training", error);
     }
@@ -168,15 +178,19 @@ class MnistTraining {
   public async predict(sample: tf.Tensor1D) {
     let model = this.model;
     try {
-      model = await tf.loadLayersModel(MODEL_SAVE_PATH)      
-    } catch (error) { }
-    const resp = await tf.tidy(() =>
-      (model.predict(
-        sample.reshape<tf.Rank.R4>([1, IMAGE_WIDTH, IMAGE_HEIGHT, 1])
-      ) as tf.Tensor2D)
-        .argMax(1)
-        .asScalar()
-    ).data();
+      if (!this.isExternalModelLoaded) {
+        model = await tf.loadLayersModel(MODEL_SAVE_PATH);
+      }
+    } catch (error) {}
+    const resp = await tf
+      .tidy(() =>
+        (model.predict(
+          sample.reshape<tf.Rank.R4>([1, IMAGE_WIDTH, IMAGE_HEIGHT, 1])
+        ) as tf.Tensor2D)
+          .argMax(1)
+          .asScalar()
+      )
+      .data();
     return resp.toString();
   }
 }
