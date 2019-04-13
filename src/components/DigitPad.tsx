@@ -6,19 +6,21 @@ import {
   runWIthCanvasContext,
   recognizeDigit
 } from "../helpers/canvas";
-import { Box, Text } from "grommet";
+import mnistTraining from "../mnist/training";
+import { Box, Text, Button } from "grommet";
 
 interface Coordinates {
   x: number;
   y: number;
 }
 
+let touchend: NodeJS.Timeout;
+
 export default () => {
   const [isDrawing, setDrawing] = React.useState(false);
   const [isRecognized, setRecognized] = React.useState(false);
   const [prediction, setPrediction] = React.useState("");
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  let touchend: NodeJS.Timeout;
 
   const zoom = 10;
   const footprint = {
@@ -43,7 +45,7 @@ export default () => {
       return () => {
         canvas.removeEventListener("touchmove", handler, false);
         canvas.removeEventListener("touchcancel", handler, false);
-      }
+      };
     });
   }, []);
 
@@ -80,8 +82,9 @@ export default () => {
         touchend = setTimeout(async () => {
           const predict = await recognizeDigit(context);
           setPrediction(predict);
+          setRecognized(true);
           clearer(context);
-        }, 300);
+        }, 2500);
       }
     }));
   };
@@ -141,6 +144,10 @@ export default () => {
 
   return (
     <Box direction="column" align="center" pad="medium">
+      <Button
+        label="Load trained model"
+        onClick={() => mnistTraining.loadTrainedModel()}
+      />
       <Text>Draw here</Text>
       <Box
         border={{ color: "brand", size: "large" }}
