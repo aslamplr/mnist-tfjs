@@ -84,7 +84,7 @@ export default () => {
           setPrediction(predict);
           setRecognized(true);
           clearer(context);
-        }, 2500);
+        }, 1200);
       }
     }));
   };
